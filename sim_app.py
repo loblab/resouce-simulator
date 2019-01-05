@@ -7,16 +7,23 @@ class WorkerThread(threading.Thread):
         super().__init__()
         self.app = app
         self.log = app.log
+        self.cycle = app.args.cycle
 
     def run(self):
         self.log.info("Worker thread start...")
         loop = self.app.args.loop
+        tick = 0
+        t1 = time.time()
         while loop != 0 and not self.app.quit_flag:
             self.app.execute()
             self.app.report()
-            self.app.sleep()
             if loop > 0:
                 loop -= 1
+            tick += 1
+            t2 = self.cycle * tick + t1
+            wait = t2 - time.time()
+            if wait > 0:
+                time.sleep(wait)
         self.log.info("Worker thread quit.")
         return 0
 
@@ -67,7 +74,7 @@ class SimApp(TsdbApp):
             obj.execute()
 
     def report(self):
-        self.log.debug("Cycle status report...")
+        #self.log.debug("Cycle status report...")
         points = []
         for obj in self.objects:
             point = {

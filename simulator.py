@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 import sys
+import time
 import math
 from sim_app import SimApp
 from resource import *
@@ -13,9 +14,9 @@ class Camera(Resource):
     EXPOSING = 1
     EXPOSED = 2
     TRANSFERRING = 3
-    NW_USAGE = 0.7
+    NW_USAGE = 0.99
 
-    def __init__(self, name, exptime=30, txwait=0, txtime=95):
+    def __init__(self, name, exptime=30, txwait=0, txtime=100):
         super().__init__(name)
         self.exptime = exptime
         self.txwait = txwait
@@ -92,11 +93,11 @@ class App(SimApp):
         self.add_object(sync)
         self.sync = sync
 
-        nic1 = Usage("NIC1", 0.05)
-        nic2 = Usage("NIC2", 0.10)
-        nic3 = Usage("NIC3", 0.15)
-        nic4 = Usage("NIC4", 0.20)
-        nic0 = Usage("NIC0", 0)
+        nic1 = Usage("NIC1")
+        nic2 = Usage("NIC2")
+        nic3 = Usage("NIC3")
+        nic4 = Usage("NIC4")
+        nic0 = Usage("NIC0")
         self.add_object(nic1, nic2, nic3, nic4, nic0)
         self.nic1 = nic1
         self.nic2 = nic2
@@ -117,8 +118,8 @@ class App(SimApp):
         self.ltY1234 = ltY1234
         self.ltY5 = ltY5
 
-        camA = Camera("A", 30, 96)
-        camB = Camera("B", 30, 96)
+        camA = Camera("A", 30, 90)
+        camB = Camera("B", 30, 90)
         camC = Camera("C")
         camD = Camera("D")
         camE = Camera("E", 30, 120)
@@ -166,6 +167,12 @@ class App(SimApp):
         self.camM = camM
         self.camN = camN
 
+    def till(self, tick):
+        t2 = self.args.cycle * tick + self.t1
+        wait = t2 - time.time()
+        if wait > 0:
+            time.sleep(wait)
+
     def process(self):
         self.log.info("Main process...")
 
@@ -175,42 +182,46 @@ class App(SimApp):
         self.sleep(70)
 
         while not self.quit_flag:
+            self.t1 = time.time()
             self.sync.trigger()
 
-            self.camA.trigger()
-            self.camB.trigger()
             self.camG.trigger()
             self.camH.trigger()
             self.camK.trigger()
             self.camM.trigger()
             self.camN.trigger()
 
-            self.sleep(40)
+            self.till(20)
+            self.camA.trigger()
+            self.camB.trigger()
+
+            self.till(50)
             self.ltX1.on()
             self.ltX3.off()
             self.ltX4.off()
             self.ltY1234.on()
             self.ltY5.on()
-            self.sleep(85)
 
+            self.till(125)
             self.camC.trigger()
             self.camD.trigger()
             self.camE.trigger()
             self.camF.trigger()
 
-            self.sleep(40)
+            self.till(165)
             self.ltY1234.off()
-            self.sleep(85)
 
+            self.till(250)
             self.camA.trigger()
             self.camB.trigger()
 
-            self.sleep(40)
+            self.till(290)
             self.ltX1.off()
             self.ltX3.on()
             self.ltX4.on()
             self.ltY5.off()
-            self.sleep(210)
+
+            self.till(500)
 
 
 if __name__ == "__main__":
