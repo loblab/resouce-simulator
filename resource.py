@@ -14,6 +14,17 @@ class Resource:
         self.time += 1
 
 
+class Function(Resource):
+
+    def __init__(self, name, func):
+        super().__init__(name)
+        self.func = func
+
+    def execute(self):
+        self.time += 1
+        self.value = self.func(self.time) * self.AMP + self.MIN
+
+
 class Usage(Resource):
 
     def __init__(self, name, base=0.0):
@@ -97,15 +108,4 @@ class DelayChange(Resource):
                 self.delay = None
             else:
                 self.value = (self.v2 - self.v1) * r + self.v1
-
-class Power(Resource):
-
-    def __init__(self, name, cycle=20, phase=0):
-        super().__init__(name)
-        self.cycle = cycle
-        self.time += phase
-
-    def execute(self):
-        self.value = math.sin(2 * math.pi * self.time / self.cycle) * self.AMP + self.MIN
-        self.time += 1
 

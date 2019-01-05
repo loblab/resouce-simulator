@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 import sys
+import math
 from sim_app import SimApp
 from resource import *
 
@@ -8,14 +9,19 @@ DESC = "Resource simulator"
 
 class App(SimApp):
 
-    def prepare_demo(self):
-        self.log.info("Prepare the demo resources...")
-        self.add_object(Power("Power1", 80))
-        self.add_object(Power("Power2", 100))
-        self.add_object(Power("Power3", 100, 40))
+    def test(self):
+        wave1 = lambda t: math.sin(2 * math.pi * t / 100) * 0.5 + 0.5
+        wave2 = lambda t: math.sin(2 * math.pi * (t - 40) / 80) * 0.5 + 0.5
+        wave3 = lambda t: 0 if int(t / 100) % 2 == 0 else 1
+        t1 = Function("T1", wave1)
+        t2 = Function("T2", wave2)
+        t3 = Function("T3", wave3)
+        self.add_object(t1, t2, t3)
 
     def prepare(self):
         self.log.info("Prepare the resources...")
+        self.test()
+
         sync = Pluse("SYN")
         self.add_object(sync)
         self.sync = sync
