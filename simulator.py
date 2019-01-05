@@ -24,12 +24,24 @@ class App(SimApp):
         self.add_object(nic1, nic2, nic3, nic4, nic5)
         self.nic1 = nic1
         self.nic2 = nic2
+        ltx1 = DelayChange("X1", 30, 30, 10, 50)
+        ltx2 = DelayChange("X2", 30, 30, 10, 50)
+        self.add_object(ltx1, ltx2)
+        self.ltx1 = ltx1
+        self.ltx2 = ltx2
 
     def process(self):
         self.log.info("Main process...")
         while not self.quit_flag:
+            self.ltx1.on()
+            self.sleep(5)
+            self.ltx2.on()
+            self.sleep(60)
             self.nic1.change_usage(0.7)
             self.sleep(20)
+            self.ltx1.off()
+            self.sleep(5)
+            self.ltx2.off()
             self.nic2.change_usage(0.7)
             self.sleep(40)
             self.nic2.change_usage(-0.7)
