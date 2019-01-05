@@ -4,7 +4,7 @@ from tsdb_app import *
 
 class WorkerThread(threading.Thread):
     def __init__(self, app):
-        super(WorkerThread, self).__init__()
+        super().__init__()
         self.app = app
         self.log = app.log
 
@@ -28,6 +28,7 @@ class SimApp(TsdbApp):
     def main(self):
         thread = None
         self.startup()
+        self.prepare()
         thread = WorkerThread(self)
         thread.start()
         self.process()
@@ -43,13 +44,36 @@ class SimApp(TsdbApp):
         self.argps.add_argument('-l', '--loop', dest='loop', type=int,
                 default=self.DEFAULT_LOOP,
             help="Loop count. default %d. -1 is forever" % self.DEFAULT_LOOP)
+        self.objects = []
+
+    def add_object(self, obj):
+        self.log.info("Add object '%s'", obj.name)
+        self.objects.append(obj)
+
+    def prepare(self):
+        self.log.info("Prepare the resources...")
 
     def process(self):
         self.log.info("Main process...")
 
     def execute(self):
         self.log.debug("Cycle execute...")
+        for obj in self.objects:
+            obj.execute()
 
     def report(self):
         self.log.debug("Cycle status report...")
+        points = []
+        for obj in self.objects:
+            point = {
+                "measurement": "data",
+                "tags": {
+                    "object": obj.name,
+                },
+                "fields": {
+                    "value": obj.value,
+                },
+            }
+            points.append(point)
+        self.tsdb.write_points(points)
 
