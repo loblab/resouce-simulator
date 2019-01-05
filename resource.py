@@ -25,6 +25,29 @@ class Usage(Resource):
         self.value = self.AMP * self.usage + self.MIN
 
 
+class Pluse(Resource):
+
+    def __init__(self, name, width=1):
+        super().__init__(name)
+        self.width = width
+        self.t1 = None
+        self.dur = None
+
+    def trigger(self):
+        self.t1 = self.time
+        self.dur = self.width
+
+    def execute(self):
+        self.time += 1
+        if self.dur is None:
+            return
+        if self.dur > 0:
+            self.value = self.MIN + self.AMP
+            self.dur -= 1
+        else:
+            self.value = self.MIN
+            self.dur = None
+
 class DelayChange(Resource):
 
     def __init__(self, name, delay_up=0, leading=0, delay_down=0, trailing=0):

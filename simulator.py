@@ -16,6 +16,9 @@ class App(SimApp):
 
     def prepare(self):
         self.log.info("Prepare the resources...")
+        sync = Pluse("SYN")
+        self.add_object(sync)
+        self.sync = sync
         nic1 = Usage("NIC1", 0.05)
         nic2 = Usage("NIC2", 0.10)
         nic3 = Usage("NIC3", 0.15)
@@ -37,6 +40,7 @@ class App(SimApp):
             self.sleep(5)
             self.ltx2.on()
             self.sleep(60)
+            self.sync.trigger()
             self.nic1.change_usage(0.7)
             self.sleep(20)
             self.ltx1.off()
