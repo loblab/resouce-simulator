@@ -4,7 +4,7 @@
 HOST=localhost
 PORT=8087
 DB=resim
-DUR=1d
+DUR=1h
 
 init_database() {
   curl -i -XPOST http://$HOST:$PORT/query --data-urlencode "q=DROP DATABASE $DB"

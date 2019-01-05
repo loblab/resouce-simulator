@@ -14,7 +14,7 @@ class WorkerThread(threading.Thread):
         while loop != 0 and not self.app.quit_flag:
             self.app.execute()
             self.app.report()
-            time.sleep(self.app.args.cycle)
+            self.app.sleep()
             if loop > 0:
                 loop -= 1
         self.log.info("Worker thread quit.")
@@ -46,9 +46,13 @@ class SimApp(TsdbApp):
             help="Loop count. default %d. -1 is forever" % self.DEFAULT_LOOP)
         self.objects = []
 
-    def add_object(self, obj):
-        self.log.info("Add object '%s'", obj.name)
-        self.objects.append(obj)
+    def add_object(self, *objs):
+        for obj in objs:
+            self.log.info("Add object '%s'", obj.name)
+            self.objects.append(obj)
+
+    def sleep(self, clock=1):
+        time.sleep(self.args.cycle * clock)
 
     def prepare(self):
         self.log.info("Prepare the resources...")

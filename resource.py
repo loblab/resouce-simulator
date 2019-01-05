@@ -13,6 +13,18 @@ class Resource:
     def execute(self):
         self.time += 1
 
+
+class Usage(Resource):
+
+    def __init__(self, name, base=0.0):
+        super().__init__(name)
+        self.usage = base
+
+    def change_usage(self, usage):
+        self.usage += usage
+        self.value = self.AMP * self.usage + self.MIN
+
+
 class Power(Resource):
 
     def __init__(self, name, cycle=20, phase=0):
