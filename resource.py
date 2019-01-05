@@ -5,9 +5,9 @@ class Resource:
     MIN = 0.0
     AMP = 100.0
 
-    def __init__(self, name):
+    def __init__(self, name, val=0):
         self.name = name
-        self.value = self.MIN
+        self.value = self.AMP * val + self.MIN
         self.time = 0
 
     def execute(self):

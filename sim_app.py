@@ -49,6 +49,7 @@ class SimApp(TsdbApp):
     def add_object(self, *objs):
         for obj in objs:
             self.log.info("Add object '%s'", obj.name)
+            obj.log = self.log
             self.objects.append(obj)
 
     def sleep(self, clock=1):
