@@ -77,11 +77,32 @@ class SimApp(TsdbApp):
         for obj in self.objects:
             obj.execute()
 
+    def get_object(self, name):
+        for obj in self.objects:
+            if obj.name == name:
+                return obj
+        return None
+
+    def set_view(self, *names):
+        self.view = []
+        for name in names:
+            obj = self.get_object(name)
+            if obj is None:
+                self.log.warning("set_view: Cannot find object '%s'", name)
+            else:
+                self.view.append(obj)
+                self.log.info("Add object '%s' to view", name)
+
     def report(self):
         #self.log.debug("Cycle status report...")
         points = []
-        for obj in self.objects:
-            value = int(obj.value * self.args.amp)
+        dist = self.args.amp
+        amp = dist * 0.8
+        objs = self.view
+        offset = dist * len(objs)
+        for obj in objs:
+            offset -= dist
+            value = int(obj.value * amp) + offset
             point = {
                 "measurement": "data",
                 "tags": {

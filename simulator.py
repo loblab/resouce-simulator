@@ -89,7 +89,7 @@ class App(SimApp):
         self.log.info("Prepare the resources...")
         #self.test()
 
-        sync = Pluse("SYN")
+        sync = Pluse("SYN", 5)
         self.add_object(sync)
         self.sync = sync
 
@@ -166,6 +166,13 @@ class App(SimApp):
         self.camK = camK
         self.camM = camM
         self.camN = camN
+
+        self.set_view(
+            'SYN',
+            'X4', 'X1', 'A',
+            'X3', 'Y1234', 'Y5', 'B', 'F',
+            'NIC1', 'NIC2', 'NIC3', 'NIC4', 'NIC0'
+            )
 
     def till(self, tick):
         t2 = self.args.cycle * tick + self.t1
