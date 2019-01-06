@@ -16,7 +16,7 @@ class BaseApp:
         self.argps = argparse.ArgumentParser(description=description)
         self.argps.add_argument('-V', '--version', action='version', version=ver)
         self.argps.add_argument('-D', '--debug', action='store_true',
-                help="Output more logs (debug level)")
+                help="output more logs (debug level)")
         self.baseInit()
         self.init()
         self.args = self.argps.parse_args()

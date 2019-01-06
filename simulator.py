@@ -48,12 +48,12 @@ class Camera(Resource):
                 s = 0
                 for lt in self.lights:
                     s += lt.value
-                r = int(s / self.AMP + 0.5)
+                r = int(s + 0.5)
                 if r > 1:
                     s /= r
                 self.value = s
             else:
-                self.value = self.MIN
+                self.value = 0
                 self.wait = self.txwait
                 self.status = self.EXPOSED
                 self.log.info("Camera %s: exposed; next wait: %d", self.name, self.wait)

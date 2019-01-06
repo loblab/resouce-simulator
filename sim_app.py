@@ -31,6 +31,7 @@ class SimApp(TsdbApp):
 
     DEFAULT_CYCLE = 0.01
     DEFAULT_LOOP = 1000
+    DEFAULT_AMP = 100
 
     def main(self):
         thread = None
@@ -47,10 +48,13 @@ class SimApp(TsdbApp):
     def init(self):
         self.argps.add_argument('-c', '--cycle', dest='cycle', type=float,
                 default=self.DEFAULT_CYCLE,
-            help="Clock cycle. default %.3f(second)" % self.DEFAULT_CYCLE)
+            help="clock cycle. default %.3f(second)" % self.DEFAULT_CYCLE)
         self.argps.add_argument('-l', '--loop', dest='loop', type=int,
                 default=self.DEFAULT_LOOP,
-            help="Loop count. default %d. -1 is forever" % self.DEFAULT_LOOP)
+            help="loop count. default %d. -1 is forever" % self.DEFAULT_LOOP)
+        self.argps.add_argument('-a', '--amp', dest='amp', type=int,
+                default=self.DEFAULT_AMP,
+            help="amplitude of the output values. default %d" % self.DEFAULT_AMP)
         self.objects = []
 
     def add_object(self, *objs):
@@ -77,13 +81,14 @@ class SimApp(TsdbApp):
         #self.log.debug("Cycle status report...")
         points = []
         for obj in self.objects:
+            value = int(obj.value * self.args.amp)
             point = {
                 "measurement": "data",
                 "tags": {
                     "object": obj.name,
                 },
                 "fields": {
-                    "value": obj.value,
+                    "value": value,
                 },
             }
             points.append(point)

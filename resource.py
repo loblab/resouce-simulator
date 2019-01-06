@@ -2,12 +2,9 @@ import math
 
 class Resource:
 
-    MIN = 0.0
-    AMP = 100.0
-
     def __init__(self, name, val=0):
         self.name = name
-        self.value = self.AMP * val + self.MIN
+        self.value = val
         self.time = 0
 
     def execute(self):
@@ -22,18 +19,13 @@ class Function(Resource):
 
     def execute(self):
         self.time += 1
-        self.value = self.func(self.time) * self.AMP + self.MIN
+        self.value = self.func(self.time)
 
 
 class Usage(Resource):
 
-    def __init__(self, name, base=0.0):
-        super().__init__(name)
-        self.usage = base
-
     def change_usage(self, usage):
-        self.usage += usage
-        self.value = self.AMP * self.usage + self.MIN
+        self.value += usage
 
 
 class Pluse(Resource):
@@ -53,10 +45,10 @@ class Pluse(Resource):
         if self.dur is None:
             return
         if self.dur > 0:
-            self.value = self.MIN + self.AMP
+            self.value = 1
             self.dur -= 1
         else:
-            self.value = self.MIN
+            self.value = 0
             self.dur = None
 
 class DelayChange(Resource):
@@ -78,18 +70,18 @@ class DelayChange(Resource):
         self.v2 = value
         if value >= self.value:
             self.delay = self.delay_up
-            self.period = (self.v2 - self.v1) / self.AMP * self.leading
+            self.period = (self.v2 - self.v1) * self.leading
         else:
             self.delay = self.delay_down
-            self.period = (self.v1 - self.v2) / self.AMP * self.trailing
+            self.period = (self.v1 - self.v2) * self.trailing
         if self.period == 0:
             self.period = 1
 
     def on(self):
-        self.change(self.MIN + self.AMP)
+        self.change(1)
 
     def off(self):
-        self.change(self.MIN)
+        self.change(0)
 
     def execute(self):
         self.time += 1
