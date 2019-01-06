@@ -8,8 +8,8 @@ import logging
 class BaseApp:
 
     def __init__(self, id, description):
-        signal.signal(signal.SIGINT, self.sigHandler)
-        signal.signal(signal.SIGTERM, self.sigHandler)
+        signal.signal(signal.SIGINT, self.sig_handler)
+        signal.signal(signal.SIGTERM, self.sig_handler)
         self.quit_flag = False
         sfile = sys.argv[0]
         ver = time.strftime('Ver %Y/%m/%d %H:%M %Z', time.localtime(os.path.getmtime(sfile)))
@@ -17,21 +17,21 @@ class BaseApp:
         self.argps.add_argument('-V', '--version', action='version', version=ver)
         self.argps.add_argument('-D', '--debug', action='store_true',
                 help="output more logs (debug level)")
-        self.baseInit()
+        self.base_init()
         self.init()
         self.args = self.argps.parse_args()
         try:
             self.id = self.args.id
         except:
             self.id = id
-        self.initLogger()
+        self.init_logger()
         self.log.info(description)
         self.log.info(ver)
         if self.args.debug:
             self.log.setLevel(logging.DEBUG)
             self.log.debug("Debug log on")
 
-    def initLogger(self):
+    def init_logger(self):
         self.log = logging.getLogger(self.id)
         self.log.setLevel(logging.INFO)
 
@@ -46,11 +46,11 @@ class BaseApp:
         self.log.debug("Going to quit...")
         self.quit_flag = True
 
-    def sigHandler(self, signum, frame):
+    def sig_handler(self, signum, frame):
         self.log.info("Got signal %d" % signum)
         self.quit()
 
-    def baseInit(self):
+    def base_init(self):
         pass
 
     def init(self):

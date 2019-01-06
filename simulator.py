@@ -36,7 +36,7 @@ class Camera(Resource):
             return
         self.wait = self.exptime
         self.status = self.EXPOSING
-        self.log.info("Camera %s: start exposing; next wait: %d", self.name, self.wait)
+        self.log.debug("Camera %s: start exposing; next wait: %d", self.name, self.wait)
 
     def execute(self):
         self.time += 1
@@ -56,22 +56,22 @@ class Camera(Resource):
                 self.value = 0
                 self.wait = self.txwait
                 self.status = self.EXPOSED
-                self.log.info("Camera %s: exposed; next wait: %d", self.name, self.wait)
+                self.log.debug("Camera %s: exposed; next wait: %d", self.name, self.wait)
         if self.status == self.EXPOSED:
             if self.wait > 0:
                 self.wait -= 1
             else:
                 self.wait = self.txtime
                 self.status = self.TRANSFERRING
-                self.nic.change_usage(self.NW_USAGE)
-                self.log.info("Camera %s: start transferring; next wait: %d", self.name, self.wait)
+                self.nic.use(self.NW_USAGE)
+                self.log.debug("Camera %s: start transferring; next wait: %d", self.name, self.wait)
         if self.status == self.TRANSFERRING:
             if self.wait > 0:
                 self.wait -= 1
             else:
                 self.status = self.IDLE
-                self.nic.change_usage(-self.NW_USAGE)
-                self.log.info("Camera %s: transferring completed", self.name)
+                self.nic.use(-self.NW_USAGE)
+                self.log.debug("Camera %s: transferring completed", self.name)
 
 
 class App(SimApp):
@@ -93,11 +93,11 @@ class App(SimApp):
         self.add_object(sync)
         self.sync = sync
 
-        nic1 = Usage("NIC1")
-        nic2 = Usage("NIC2")
-        nic3 = Usage("NIC3")
-        nic4 = Usage("NIC4")
-        nic0 = Usage("NIC0")
+        nic1 = Resource("NIC1")
+        nic2 = Resource("NIC2")
+        nic3 = Resource("NIC3")
+        nic4 = Resource("NIC4")
+        nic0 = Resource("NIC0")
         self.add_object(nic1, nic2, nic3, nic4, nic0)
         self.nic1 = nic1
         self.nic2 = nic2
@@ -179,7 +179,7 @@ class App(SimApp):
         self.ltX2.on()
         self.ltX3.on()
         self.ltX4.on()
-        self.sleep(70)
+        self.wait(70)
 
         while not self.quit_flag:
             self.t1 = time.time()

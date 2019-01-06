@@ -63,7 +63,7 @@ class SimApp(TsdbApp):
             obj.log = self.log
             self.objects.append(obj)
 
-    def sleep(self, clock=1):
+    def wait(self, clock=1):
         time.sleep(self.args.cycle * clock)
 
     def prepare(self):

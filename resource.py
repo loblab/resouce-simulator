@@ -10,6 +10,9 @@ class Resource:
     def execute(self):
         self.time += 1
 
+    def use(self, val):
+        self.value += val
+
 
 class Function(Resource):
 
@@ -20,12 +23,6 @@ class Function(Resource):
     def execute(self):
         self.time += 1
         self.value = self.func(self.time)
-
-
-class Usage(Resource):
-
-    def change_usage(self, usage):
-        self.value += usage
 
 
 class Pluse(Resource):

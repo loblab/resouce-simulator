@@ -6,11 +6,11 @@ class TsdbApp(BaseApp):
 
     DEFAULT_HOST = "influxdb"
     DEFAULT_PORT = 8086
+    DEFAULT_DATA = "resim"
     DEFAULT_USER = ""
     DEFAULT_PSWD = ""
-    DEFAULT_DATA = "resim"
 
-    def baseInit(self):
+    def base_init(self):
         self.argps.add_argument('-s', '--host', dest='host', type=str, default=self.DEFAULT_HOST,
             help="InfluxDB server address. default '%s'" % self.DEFAULT_HOST)
         self.argps.add_argument('-p', '--port', dest='port', type=int, default=self.DEFAULT_PORT,
