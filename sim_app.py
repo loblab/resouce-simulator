@@ -33,6 +33,8 @@ class SimApp(TsdbApp):
     DEFAULT_LOOP = 1000
     DEFAULT_AMP = 100
 
+    ROW_HEIGHT = 0.8  # 20% gap for multiple waveforms
+
     def main(self):
         thread = None
         self.startup()
@@ -97,7 +99,7 @@ class SimApp(TsdbApp):
         #self.log.debug("Cycle status report...")
         points = []
         dist = self.args.amp
-        amp = dist * 0.8
+        amp = dist * self.ROW_HEIGHT
         objs = self.view
         offset = dist * len(objs)
         for obj in objs:

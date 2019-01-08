@@ -14,11 +14,13 @@ class Camera(Resource):
     EXPOSING = 1
     EXPOSED = 2
     TRANSFERRING = 3
-    NW_USAGE = 0.99
+    NW_USAGE = 1
 
-    def __init__(self, name, exptime=30, txwait=0, txtime=100):
+    INIT_TIME = 5
+
+    def __init__(self, name, exptime=30, txwait=0, txtime=110):
         super().__init__(name)
-        self.exptime = exptime
+        self.exptime = exptime + self.INIT_TIME
         self.txwait = txwait
         self.txtime = txtime
         self.status = self.IDLE
@@ -97,8 +99,7 @@ class App(SimApp):
         nic2 = Resource("NIC2")
         nic3 = Resource("NIC3")
         nic4 = Resource("NIC4")
-        nic0 = Resource("NIC0")
-        self.add_object(nic1, nic2, nic3, nic4, nic0)
+        self.add_object(nic1, nic2, nic3, nic4)
         self.nic1 = nic1
         self.nic2 = nic2
 
@@ -118,28 +119,31 @@ class App(SimApp):
         self.ltY1234 = ltY1234
         self.ltY5 = ltY5
 
-        camA = Camera("A", 30, 90)
-        camB = Camera("B", 30, 90)
-        camC = Camera("C")
-        camD = Camera("D")
-        camE = Camera("E", 30, 120)
-        camF = Camera("F", 30, 120)
+        camA = Camera("A", 30, 150)
+        camB = Camera("B", 30, 150)
+        #camC = Camera("C")
+        camC = Camera("C", 30, 150)
+        camD = Camera("D", 30, 150)
+        camE = Camera("E", 30, 150)
+        camF = Camera("F", 30, 150)
         camG = Camera("G")
         camH = Camera("H")
         camK = Camera("K")
-        camM = Camera("M")
+        camM = Camera("M", 30, 150)
         camN = Camera("N")
 
-        camG.set_network(nic0)
+        camG.set_network(nic3)
         camH.set_network(nic1)
         camA.set_network(nic1)
         camK.set_network(nic2)
         camB.set_network(nic2)
         camM.set_network(nic3)
-        camC.set_network(nic3)
+        #camC.set_network(nic3)
+        camC.set_network(nic1)
         camE.set_network(nic3)
         camN.set_network(nic4)
-        camD.set_network(nic4)
+        #camD.set_network(nic4)
+        camD.set_network(nic2)
         camF.set_network(nic4)
 
         camA.set_lights(ltbg, ltX1, ltX4)
@@ -170,8 +174,8 @@ class App(SimApp):
         self.set_view(
             'SYN',
             'X4', 'X1', 'A',
-            'X3', 'Y1234', 'Y5', 'B', 'F',
-            'NIC1', 'NIC2', 'NIC3', 'NIC4', 'NIC0'
+            'X3', 'Y1234', 'Y5', 'B', 'C', 'F',
+            'NIC1', 'NIC2', 'NIC3', 'NIC4'
             )
 
     def till(self, tick):
@@ -197,38 +201,36 @@ class App(SimApp):
             self.camK.trigger()
             self.camM.trigger()
             self.camN.trigger()
-
-            self.till(20)
             self.camA.trigger()
             self.camB.trigger()
 
-            self.till(50)
+            self.till(80)
             self.ltX1.on()
             self.ltX3.off()
             self.ltX4.off()
             self.ltY1234.on()
             self.ltY5.on()
 
-            self.till(125)
+            self.till(150)
             self.camC.trigger()
             self.camD.trigger()
             self.camE.trigger()
             self.camF.trigger()
 
-            self.till(165)
+            self.till(230)
             self.ltY1234.off()
 
-            self.till(250)
+            self.till(300)
             self.camA.trigger()
             self.camB.trigger()
 
-            self.till(290)
+            self.till(380)
             self.ltX1.off()
             self.ltX3.on()
             self.ltX4.on()
             self.ltY5.off()
 
-            self.till(500)
+            self.till(600)
 
 
 if __name__ == "__main__":
